@@ -22,6 +22,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🌟 自动把大写用户名转换成全小写，防止权限和命名报错
+      - name: Convert owner to lowercase
+        run: |
+          echo "OWNER_LC=${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -38,8 +43,8 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-          tags: ghcr.io/qno1122/zouno:4966
+          # 🌟 这里已经帮你彻底修复了对齐和重复问题，直接采用自动变量
+          tags: ghcr.io/${{ env.OWNER_LC }}/zouno:4966
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.description=HTTP Server
